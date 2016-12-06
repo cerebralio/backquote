@@ -1,0 +1,22 @@
+{
+  "name": "backquote",
+  "version": "0.0.1",
+  "description": "A very flexible templating library",
+  "main": "backquote.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cerebralio/backquote.git"
+  },
+  "author": "Alex Scheel Meyer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cerebralio/backquote/issues"
+  },
+  "homepage": "https://github.com/cerebralio/backquote#readme"
+}

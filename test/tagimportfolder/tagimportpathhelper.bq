@@ -1,0 +1,7 @@
+{% macro test() %}
+habla espanol?
+{% endmacro %}
+
+{% macro test2(language) %}
+habla {# language #}?
+{% endmacro %}
