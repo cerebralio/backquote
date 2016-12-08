@@ -28,6 +28,12 @@ describe('With Tag',function(){
 		assert.equal(renderTpl(),'->habla svenska?');
 	});
 
+	it('should allow adding new blocks',function(){
+		var tpl='{% with "tagwithhelper3.bq" %}{% block test %}habla svenska?{% endblock %}{% block abc %}!{% endblock %}{% endwith %}';
+		var renderTpl=bq.compile(tpl);
+		assert.equal(renderTpl(),'->habla svenska?');
+	});
+
 	it('should allow calling super',function(){
 		var tpl='{% with "tagwithhelper4.bq" %}{% block test %}{% super %}<-{% endblock %}{% endwith %}';
 		var renderTpl=bq.compile(tpl);

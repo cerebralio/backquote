@@ -457,7 +457,7 @@ Backquote.prototype.compile=function(template,options){
 	this.compileCore(template,ctx,options);
 
 	var compiled=ctx.getFunc();
-	ctx.clear();// we are starting over to prefix header
+	ctx.clear(); // we are starting over to prefix header
 
 	ctx.addCode('if(__dict===undefined)__dict={};\n');
 
@@ -480,12 +480,10 @@ Backquote.prototype.compile=function(template,options){
 	ctx.addCode(compiled);
 
 	//now the footer
-//	ctx.endData();
 	ctx.addCode('return __str;\n');
 
 	var func=ctx.getFunc();
 
-//	console.log(func);
 	var compiled=new Function('__dict',func);
 	compiled.code=func;
 	return compiled;

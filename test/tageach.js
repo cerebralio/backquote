@@ -13,7 +13,7 @@ describe('Each Tag',function(){
 	it('should be able to iterate an object',function(){
 		var tpl='{% each value in item %}{# loop.index1 #}) {# loop.key #}:{# value #}\n{% endeach %}';
 		var renderTpl=bq.compile(tpl);
-		assert.equal(renderTpl({item:{name:'Joe Schmoe',age:'38',likes:'beer, pussy and horn music'}}),'1) name:Joe Schmoe\n2) age:38\n3) likes:beer, pussy and horn music\n');
+		assert.equal(renderTpl({item:{name:'Joe Schmoe',age:'38',likes:'beer, dancing and loud music'}}),'1) name:Joe Schmoe\n2) age:38\n3) likes:beer, dancing and loud music\n');
 	});
 
 	it('should have loop index',function(){

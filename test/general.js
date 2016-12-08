@@ -26,6 +26,11 @@ describe('compile',function(){
 		assert.throws(function(){bq.compile(tpl);});
 	});
 
+  it('should throw on command without end tag', function(){
+		var tpl='{% if true %}';
+		assert.throws(function(){bq.compile(tpl);});
+  });
+
 	it('should allow rendering file directly',function(){
 		assert.equal(bq.renderFile(__dirname+'/tagwithhelper2.bq',{language:'svenska'}),'habla svenska?');
 	});

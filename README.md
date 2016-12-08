@@ -3,7 +3,7 @@ Backquote
 
 Backquote is a templating library designed to be flexible, concise and powerful.
 
-It does not HTML escape parameters by default and it allows you to execute arbitrary Javascript in your templates - so if you need to use it in an unsafe environment you will need to wrap it in a sanitizer filter.
+It does not HTML-escape parameters by default and it allows you to execute arbitrary Javascript in your templates - so if you need to use it in an unsafe environment you will need to wrap it in a sanitizer filter.
 
 Features
 -----
@@ -100,7 +100,7 @@ Within the each tag you also have access to certain special variables.
   * loop.index1 - the 1-base index into the array or object.
   * loop.first - true if this is the first item in an array.
   * loop.last - true if this is the last item in an array.
-
+  * loop.key - the current key (only for objects).
 
 ### Loop
 The loop tag is similar to the each tag but allows you to control the index-value yourself.
@@ -143,9 +143,18 @@ could produce the proper head-tag you want :
 ```
 
 ### Wrap
-Reusing macros is important for maintainability, some parts of your pages will be the same across one or more sites. Sometimes though, the part that you want to reuse is not a snippet of code within the page but rather the layout of the page or part of the page. Reusing layout is tricky because then you have the specifics _within_ the general, not the other way around. While you can use the with tag for such usecases (see below), the wrap tag is a strictly low level functional approach whereas the with tag is more object oriented.
+Reusing macros is important for maintainability, for example some parts of your pages will be
+the same across one or more sites. Sometimes though, the part that you want to reuse is not a
+snippet of code within the page but rather the layout of the page or part of the page. Reusing
+layout is tricky because then you have the specifics _within_ the general, not the other way
+around. While you can use the `with` tag for such usecases (see below), the wrap tag is a strictly
+low level functional approach whereas the with tag is more object oriented (another way to describe
+it is that `wrap` is used as a _library_ whereas `with` creates a _framework_).
 
-The wrap tag builds on the macro support by giving you some syntactic sugar that allows you to write macros that take the internal content of the layout as a parameter (always the first parameter) and structure it in the template in a natural way. This is easier to show than to describe, so here is a short example of a reuseable head-tag macro:
+The `wrap` tag builds on the macro support by giving you some syntactic sugar that allows you to
+write macros that take the internal content of the `wrap` block as the first parameter,
+and structure it in the template in a natural way. This is easier to show than to describe, so
+here is a short example of a reuseable head-tag macro:
 
 ```html
 {% macro head(title,level) %}
@@ -153,7 +162,8 @@ The wrap tag builds on the macro support by giving you some syntactic sugar that
 {% endmacro %}
 ```
 
-This can then later be used over and over everywhere you want a head-tag of some size (the title parameter will be automatically filled in, so only the level parameter is needed) :
+This can then later be used over and over everywhere you want a head-tag of some size (the title
+parameter will be automatically filled in, so only the level parameter is needed) :
 
 ```html
 {% wrap head(3) %}
@@ -161,11 +171,20 @@ hello world!
 {% endwrap %}
 ```
 
-Which would produce `<h3>hello world!</h3>` (though with some newlines). For this example it is easier to just write the head tag directly but you can probably imagine how this could be useful to reuse some special 3-column fluid layout for instance.
+Which would produce `<h3>hello world!</h3>` (though with some newlines). For this example it is
+easier to just write the head tag directly but you can probably imagine how this could be useful
+to reuse some special 3-column fluid layout for instance.
+
+Another reason for using this technique, is that you can use it when you are uncertain exactly
+how a part of the template will end up - this allows you to encapsulate how you do head-tags
+for example, in a way that you can change in a single location later.
 
 
 ### Wrapnext
-In the case of reusing a multicolumn html layout, it is usually not good enough to be able to wrap a single piece of content and use that in a macro - you need to be able to provide the content for all the parts of the layout. You can use the wrapnext tag to separate multiple pieces of content and they will be provided to the macro as the first parameters.
+In the case of reusing a multicolumn html layout, it is usually not good enough to be able to
+wrap a single piece of content and use that in a macro - you need to be able to provide the content
+for all the parts of the layout. You can use the wrapnext tag to separate multiple pieces of content
+and they will be provided to the macro as the first parameters.
 
 example :
 ```html
@@ -185,7 +204,12 @@ which produces `<a href="http://google.com">search</a>`.
 
 
 ### With
-The with tag is for inheritance. You use it together with the block tag to delimit parts of the parent template that you want to override in the child-template. Compared to using macros and the wrap tag, this is a higher level approach that uses files as the basic unit and allows overriding. You can also combine them - a typical thing to do is to use inheritance for reusing a general html structure with doctype, head section, body section, etc. but then reusing the page layout through a wrapped macro that you have imported from a standard macro library.
+The `with` tag is for inheritance between template-files. You use it together with the block tag to delimit
+parts of the parent template that you want to override in the child-template. Compared to using macros and
+the wrap tag, this is a higher level approach that uses files as the basic unit and allows overriding.
+You can also combine them - a typical thing to do is to use inheritance for reusing a general html structure
+with doctype, head section, body section, etc. but then reusing the page layout through a wrapped macro that
+you have imported from a standard macro library.
 
 So given you have a template file with this content
 ```
@@ -225,6 +249,31 @@ This tells Express to use Backquote for rendering your views, simple as that.
 
 Details to Note
 -----
+### Escaping HTML
+Backquote has been designed as a general templating library and as such is not limited to rendering HTML templates.
+This also means that there is no HTML escaping by default. When you need to escape HTML the recommended method
+is to use the [escape-html](https://www.npmjs.com/package/escape-html) package (which is what express.js uses)
+and pass that as a parameter to the template.
+
+```javascript
+var escape=require('escape-html');
+var Backquote=require('backquote');
+var bq=new Backquote();
+
+…
+
+var renderTpl=bq.compile(template);
+renderTpl({escape: escape, comments: comments});
+```
+
+then in the template you can simply write:
+
+```html
+{% each comment in comments %}
+<div class="comment">{# escape(comment) #}</div>
+{% endeach %}
+```
+
 ### Whitespace
 Within templates no whitespace is ignored. This allows you to control whether you want newlines or not. So
 ```
